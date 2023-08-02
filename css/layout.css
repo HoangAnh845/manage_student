@@ -1,0 +1,232 @@
+/* styles.scss */
+/* Custom scrollbar */
+@import url("https://fonts.googleapis.com/css?family=Roboto:300&display=swap");
+
+body {
+  background: #e3e5e6;
+  margin: 0;
+  font-family: "Roboto", sans-serif;
+  letter-spacing: 1px;
+  /* overflow-y: hidden; */
+}
+
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td,
+th {
+  border: 1px solid #30445c;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+
+.main::-webkit-scrollbar {
+  width: 5px;
+}
+
+.main::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+
+.main::-webkit-scrollbar-thumb {
+  background: #a2b6c0;
+  border-radius: 10px;
+}
+
+.main::-webkit-scrollbar-thumb:hover {
+  background: #c0d3dd;
+}
+
+/* Left Menu */
+.left {
+  width: 57px;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: #30445c;
+  position: fixed;
+  transition: all 0.5s;
+  overflow-y: hidden;
+}
+
+.left:hover {
+  width: 200px;
+}
+
+.left ul {
+  padding-left: 0;
+}
+
+.left ul li {
+  list-style-type: none;
+}
+
+.left ul li.active a {
+  background: #3c536e;
+  color: #fff;
+}
+
+.left ul li.active a:hover {
+  background: #334759;
+}
+
+.left ul li a {
+  display: flex;
+  align-items: center;
+  background: #30445c;
+  color: #fff;
+  padding: 15px 0px;
+  font-size: 13px;
+  width: 200px;
+  border-bottom: 1px solid #283a4f;
+}
+
+.left ul li a:hover {
+  background: #283a4f;
+  text-decoration: none;
+}
+
+.left ul li a:focus {
+  text-decoration: none;
+}
+
+.left ul li a i.fa {
+  width: 50px;
+  text-align: center;
+  padding-right: 15px;
+  transition: all 1s;
+}
+
+.left ul li a:hover i.fa {
+  color: #a2b6c0;
+}
+
+.left .menu-heading {
+  opacity: 0;
+  padding: 10px 5px 10px 10px;
+  color: #f6c63e;
+  font-size: smaller;
+  border-bottom: 1px solid #283a4f;
+  transition: all 0.5s;
+}
+
+.left:hover .menu-heading {
+  opacity: 1;
+}
+
+/*# sourceMappingURL=layout.css.map */
+/* Right Content */
+.right {
+  transition: all 0.5s;
+  margin-left: 72px;
+}
+
+/* thongKe */
+.right #thongKe .header,
+.right #quanlyDiem .header,
+.right #doiMK .header {
+  background: #ffffff;
+  display: block;
+  border: 1px solid #e5e5e5;
+  padding: 15px 30px;
+  margin-left: -15px;
+}
+
+.right #thongKe .header h4,
+.right #quanlyDiem .header h4,
+.right #doiMK .header h4 {
+  display: inline-block;
+  color: #748194;
+}
+
+.right #thongKe .header ul,
+.right #quanlyDiem .header ul,
+.right #doiMK .header ul {
+  right: 0;
+  left: inherit;
+  max-width: 350px;
+}
+
+.right #thongKe .header ul li,
+.right #quanlyDiem .header ul li,
+.right #doiMK .header ul li {
+  display: inline-block;
+  padding-left: 20px;
+}
+
+.right #thongKe .header ul li .btn-group i.fa-user-o,
+.right #thongKe .header ul li .btn-group i.fa-bell-o,
+.right #quanlyDiem .header ul li .btn-group i.fa-user-o,
+.right #quanlyDiem .header ul li .btn-group i.fa-bell-o,
+.right #doiMK .header ul li .btn-group i.fa-user-o,
+.right #doiMK .header ul li .btn-group i.fa-bell-o {
+  color: #b3b3b3;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.right #thongKe .row {
+  display: flex;
+  justify-content: space-between;
+  padding: 25px 20px 12px 0px;
+}
+
+.right #thongKe .row .col {
+  display: flex;
+  align-items: center;
+  width: 20%;
+  padding: 15px;
+  color: white;
+  border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.right #thongKe .row .col:nth-child(1) {
+  background-color: #3085d6cc;
+}
+
+.right #thongKe .row .col:nth-child(2) {
+  background-color: #d630479c;
+}
+
+.right #thongKe .row .col:nth-child(3) {
+  background-color: #d6af3096;
+}
+
+.right #thongKe .row .col:nth-child(4) {
+  background-color: #37d63094;
+}
+
+.right #thongKe .row .total {
+  padding-left: 20px;
+}
+
+.right #thongKe .row .total div:first-child {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.right #thongKe .row .total div:last-child {
+  font-size: 12px;
+}
+
+.right #quanlyDiem .addDiemHP h4 {
+  font-weight: bold;
+}
+
+.right #quanlyDiem .addDiemHP input {
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.right #quanlyDiem .addDiemHP button {
+  padding: 10px;
+  cursor: pointer;
+}
