@@ -66,6 +66,7 @@ tr:nth-child(even) {
 
 .left ul li {
   list-style-type: none;
+  cursor: pointer;
 }
 
 .left ul li.active a {
@@ -131,7 +132,7 @@ tr:nth-child(even) {
 /* thongKe */
 .right #thongKe .header,
 .right #quanlyDiem .header,
-.right #doiMK .header {
+.right #changePass .header {
   background: #ffffff;
   display: block;
   border: 1px solid #e5e5e5;
@@ -141,14 +142,14 @@ tr:nth-child(even) {
 
 .right #thongKe .header h4,
 .right #quanlyDiem .header h4,
-.right #doiMK .header h4 {
+.right #changePass .header h4 {
   display: inline-block;
   color: #748194;
 }
 
 .right #thongKe .header ul,
 .right #quanlyDiem .header ul,
-.right #doiMK .header ul {
+.right #changePass .header ul {
   right: 0;
   left: inherit;
   max-width: 350px;
@@ -156,7 +157,7 @@ tr:nth-child(even) {
 
 .right #thongKe .header ul li,
 .right #quanlyDiem .header ul li,
-.right #doiMK .header ul li {
+.right #changePass .header ul li {
   display: inline-block;
   padding-left: 20px;
 }
@@ -165,10 +166,30 @@ tr:nth-child(even) {
 .right #thongKe .header ul li .btn-group i.fa-bell-o,
 .right #quanlyDiem .header ul li .btn-group i.fa-user-o,
 .right #quanlyDiem .header ul li .btn-group i.fa-bell-o,
-.right #doiMK .header ul li .btn-group i.fa-user-o,
-.right #doiMK .header ul li .btn-group i.fa-bell-o {
+.right #changePass .header ul li .btn-group i.fa-user-o,
+.right #changePass .header ul li .btn-group i.fa-bell-o {
   color: #b3b3b3;
   font-size: 24px;
+  cursor: pointer;
+}
+
+#changePasswordForm input {
+  border-radius: 5px;
+  border: none;
+  padding: 6px 13px;
+}
+
+#changePasswordForm label {
+  font-size: 14px;
+  line-height: 2rem;
+}
+
+#changePasswordForm button {
+  border: none;
+  background-color: rgba(0, 0, 255, 0.507);
+  padding: 10px 16px;
+  border-radius: 5px;
+  color: white;
   cursor: pointer;
 }
 
@@ -217,16 +238,16 @@ tr:nth-child(even) {
   font-size: 12px;
 }
 
-.right #quanlyDiem .addDiemHP h4 {
+.right #quanlyDiem #handlePoint h4 {
   font-weight: bold;
 }
 
-.right #quanlyDiem .addDiemHP input {
+.right #quanlyDiem #handlePoint input {
   padding: 10px;
   margin-bottom: 10px;
 }
 
-.right #quanlyDiem .addDiemHP button {
+.right #quanlyDiem #handlePoint button {
   padding: 10px;
   cursor: pointer;
 }

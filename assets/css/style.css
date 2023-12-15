@@ -2,6 +2,10 @@ body {
   background: #faf3ec;
   font-family: "Roboto";
 }
+
+button {
+  cursor: pointer;
+}
 ::-webkit-input-placeholder {
   /* Chrome/Opera/Safari */
   color: #748194;
