@@ -1,50 +1,38 @@
 <?php
 // Kết nối đến CSDL (giả sử đã có file connect_to_db.php)
 include('../config/connect_to_db.php');
-include('../class.php');
-include('../function.php');
+include('../class/message.php');
+include('../query.php');
 
 // Lấy dữ liệu từ biểu mẫu gửi lên
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $msv = $_POST['add_msv'];
-    $mhp = $_POST['add_mhp'];
-    $a = $_POST['add_a'];
-    $b = $_POST['add_b'];
-    $c = $_POST['add_c'];
-    $response = new Info();
+    $msv = $_POST['ma_sinhvien'];
+    $mhp = $_POST['ma_hocphan'];
+    $a = $_POST['diem_a'];
+    $b = $_POST['diem_b'];
+    $c = $_POST['diem_c'];
 
     // Câu truy vấn SQL để cập nhật dữ liệu vào bảng
     if (isset($msv) && isset($mhp) && isset($a) && isset($b) && isset($c)) {
-        $data = [
-            // "Mã sinh viên" => $msv,
-            // "Mã học phần" => $mhp,
-            "A" => $a,
-            "B" => $b,
-            "C" => $c
-        ];
-        $condition = [
-            "0" => "`Mã sinh viên` = '{$msv}' AND `Mã học phần` = '{$mhp}'"
-        ];
-        $conditionName = [
-            "0" => "WHERE"
-        ];
-        $q = update($conn, "tbl_diemhocphan", $data, $conditionName, $condition);
+        $q = sqlUpdate($conn, "tbl_diemhocphan", array(
+            "diem_a" => $a,
+            "diem_b" => $b,
+            "diem_c" => $c
+        ), "`ma_sinhvien`= '$msv'");
         // Trả về kết quả cho Ajax
-        if ($q->rowCount() > 0) {
-            $response->set_success(true);
-            $response->set_message('Cập nhật dữ liệu thành công.');
-            $response->set_msv($msv);
-            $response->set_a($a);
-            $response->set_b($b);
-            $response->set_c($c);
+        if (isset($q)) {
+            $sqlDiemHocPhan = sqlSelect($conn, "*", "tbl_diemhocphan", 1);
+            $diemhocphan = $sqlDiemHocPhan->fetchAll(PDO::FETCH_ASSOC);
+            $res = new Message(true, 'Cập nhật dữ liệu thành công.', [
+                "msv" => $msv,
+                "a" => $a,
+                "b" => $b,
+                "c" => $c,
+            ]);
         } else {
-            $response->set_success(false);
-            $response->set_message('Đã xảy ra lỗi khi cập nhật dữ liệu. Vui lòng thử lại sau.');
+            $res = new Message(true, 'Đã xảy ra lỗi khi cập nhật dữ liệu. Vui lòng thử lại sau.', []);
         }
-
-        echo json_encode($response);
-
-        // Đóng kết nối đến CSDL
-        include('../config/disconnect_from_db.php');
+        echo json_encode($res);
+        return $res;
     }
 }

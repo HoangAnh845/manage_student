@@ -2,14 +2,11 @@
 // ký hiệu ->: truy cập phương thức và thuộc tính của một đối tượng
 
 include('./config/connect_to_db.php');
+include('./query.php');
 
-// // Câu truy vấn SQL để lấy dữ liệu từ bảng 
-$sql = "SELECT * FROM tbl_hocphan";
-$sqlreq = $conn->query($sql);
-
+$q = sqlSelect($conn, "*", "tbl_hocphan", 1);
 // Lấy kết quả dưới dạng mảng kết hợp (Associative Array)
-$result = $sqlreq->fetchAll(PDO::FETCH_ASSOC);
-
+$result = $q->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -42,7 +39,7 @@ $result = $sqlreq->fetchAll(PDO::FETCH_ASSOC);
                 <h1 class="title">LOG IN</h1>
                 <br><br><br><br>
                 <div id="message" style="position: absolute;top: 17%;left: 30%;width: 50%;color: red;"></div>
-                <input id="email" name="fullname" type="text" placeholder="Email..." class="username" />
+                <input id="email" name="email" type="text" placeholder="Email..." class="username" />
                 <input id="password" name="password" type="password" placeholder="Password..." class="username" />
                 <button class="btn" type="submit">Login</button>
             </form>
@@ -55,7 +52,7 @@ $result = $sqlreq->fetchAll(PDO::FETCH_ASSOC);
                     <option value="">-- Chọn Học Phần --</option>
                     <?php
                     foreach ($result as $row) {
-                        echo '<option value="' . $row['Mã học phần'] . '">' . $row['Tên học phần'] . '</option>';
+                        echo '<option value="' . $row['ma_hocphan'] . '">' . $row['ten_hocphan'] . '</option>';
                     }
                     ?>
                 </select><br>

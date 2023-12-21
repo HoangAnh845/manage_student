@@ -1,25 +1,41 @@
+
 // Truy vấn
 $("#formSearch").on("submit", function (e) {
     e.preventDefault();
     var msv = $(".msv").val();
     var mhp = $(".mhp").val();
-
     // Thực hiện gửi yêu cầu AJAX đến server
     $.ajax({
         type: 'POST',
         url: 'search_results.php',
         data: {
-            msv: msv,
-            mhp: mhp
+            ma_sinhvien: msv,
+            ma_hocphan: mhp
         },
         success: function (response) {
             var resultDiv = $("#result");
-            resultDiv.empty().append(
-                $("<div>", {
-                    style: "padding:20px",
-                    html: response
-                })
-            )
+            const jsonObj = JSON.parse(response);
+            const result = jsonObj.response;
+
+            if (jsonObj.state) {
+                resultDiv.empty().append(
+                    $("<table>", {
+                        style: "padding:20px",
+                        html: `
+                        Mã sinh viên: ${result['ma_sinhvien']}<br>
+                        Mã học phần: ${result['ma_hocphan']}<br>
+                        A: ${result['diem_a']}<br>
+                        B: ${result['diem_b']}<br>
+                        C: ${result['diem_c']}<br>
+                        `
+                    })
+                )
+            } else {
+                resultDiv.empty().append(
+                    $("<div>", { style: "padding:20px;", text: jsonObj.content })
+                )
+            }
+
             $(".search").hide();
             $("#result").show();
         },
@@ -41,19 +57,16 @@ $("#formLogin").submit(function (e) {
         url: 'handle_login.php', // Đường dẫn tới file xử lý đăng nhập
         data: {
             email: email,
-            password: password
+            msv: password
         },
-        // dataType: 'json',
-        success: function (response) {
+        success: function (response) {            
             const jsonObject = JSON.parse(response) || {};
-            if (jsonObject.success) {
-                // Hiển thị thông báo thành công
-                alert(jsonObject.message);
+            if (jsonObject.state) {
+                alert(jsonObject.content);
                 // Thực hiện chuyển hướng sang liên kết khác
-                window.location.href = "http://localhost/manage_student/dashborad.php";
+                window.location.href = "http://localhost/manage_student/pages/dashborad.php";
             } else {
-                // Hiển thị thông báo lỗi
-                alert(jsonObject.message);
+                alert(jsonObject.content);
             }
         },
         error: function (xhr, status, error) {
@@ -97,6 +110,7 @@ $("#left").click(function () {
         "color": "#748194"
     });
 
+    $("#result").hide();
     $(".login").show();
     $(".search").hide();
 });

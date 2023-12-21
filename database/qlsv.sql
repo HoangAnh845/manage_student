@@ -36,11 +36,12 @@ CREATE TABLE `tbl_danhgnhap` (
 
 --
 -- Cấu trúc bảng cho bảng `tbl_diemhocphan`
---
+-- 
 
+Hãy đặt lại tên các cột dưới bảng để phù hợp với quy tắc đặt tên của MySQL   
 CREATE TABLE `tbl_diemhocphan` (
   `Mã sinh viên` int(50) NOT NULL,
-  `Mã học phần` int(50) NOT NULL,
+  `Mã học phần` int(50) NOT NULL, 
   `A` smallint(10) NOT NULL,
   `B` smallint(10) NOT NULL,
   `C` smallint(10) NOT NULL

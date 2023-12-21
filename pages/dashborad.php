@@ -1,35 +1,45 @@
 <?php
-include('./config/connect_to_db.php');
+include('../config/connect_to_db.php');
+include("../query.php");
+include("../pagination.php");
 
-// Câu truy vấn SQL để lấy tổng số lượng bản ghi trong bảng tbl_diemhocphan
+
 // UNION: dùng để tập hợp kết quả
-$sql = "
-    SELECT 'tbl_hocsinh' AS table_name, COUNT(*) AS total_records FROM tbl_sinhvien    
+$sqlSinhVien = "
+    SELECT 'tbl_sinhvien' AS table_name, COUNT(*) AS total_records FROM tbl_sinhvien
     UNION
-    SELECT 'tbl_diemhocphan' AS table_name, COUNT(*) AS total_records FROM tbl_hocphan
+    SELECT 'tbl_hocphan' AS table_name, COUNT(*) AS total_records FROM tbl_hocphan
     UNION
-    SELECT 'tbl_hocsinh' AS table_name, COUNT(*) AS total_records FROM tbl_lopchuyennganh
+    SELECT 'tbl_lop' AS table_name, COUNT(*) AS total_records FROM tbl_lopchuyennganh
     UNION
-    SELECT 'tbl_hocsinh' AS table_name, COUNT(*) AS total_records FROM tbl_khoa
+    SELECT 'tbl_khoa' AS table_name, COUNT(*) AS total_records FROM tbl_khoa
 ";
-$sqlreq = $conn->query($sql);
+$sqlreq = $conn->query($sqlSinhVien);
 $results = $sqlreq->fetchAll(PDO::FETCH_ASSOC);
 
+// Số bản ghi trên mỗi trang
+$page_size = 10;
 
-// Truy vấn bảng điểm học phần
-$sql1 = "SELECT * FROM tbl_diemhocphan";
-$sqlreq1 = $conn->query($sql1);
-$diemhocphan = $sqlreq1->fetchAll(PDO::FETCH_ASSOC);
+// Tổng số bảng ghi
+$q = sqlSelect($conn, "COUNT(*) AS total", "tbl_sinhvien", 1);
+$total_pages = $q->fetch(PDO::FETCH_DEFAULT)['total'];
 
+// Kiểm tra số trang hiên tại 
+$page = isset($_GET['page']) && is_numeric($_GET['page']) ? $_GET['page'] : 1;
 
-// Truy vấn SQL để lấy dữ liệu từ bảng học phần
-$sql2 = "SELECT * FROM tbl_hocphan";
-$sqlreq2 = $conn->query($sql2);
-$hocPhan = $sqlreq2->fetchAll(PDO::FETCH_ASSOC);
+// Tính toán số trang cần hiện 
+$start_page = ($page - 1) * $page_size;
 
+// Truy vấn dữ liệu
+$sqlDiemHocPhan = sqlSelect($conn, "*", "tbl_diemhocphan", "1 ORDER BY `ma_sinhvien` LIMIT $page_size  OFFSET $start_page");
+$diemhocphan = $sqlDiemHocPhan->fetchAll(PDO::FETCH_ASSOC);
+
+// Truy vấn bảng học phần
+$sqlHocPhan = sqlSelect($conn, "*", "tbl_hocphan", 1);
+$hocPhan = $sqlHocPhan->fetchAll(PDO::FETCH_ASSOC);
 
 // Đóng kết nối đến CSDL
-include('./config/disconnect_from_db.php');
+include('../config/disconnect_from_db.php');
 ?>
 
 <!DOCTYPE html>
@@ -41,7 +51,7 @@ include('./config/disconnect_from_db.php');
     <title>Hệ thống quản lý học tập sinh viên</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="./assets/css/dashborad.css">
+    <link rel="stylesheet" href="../assets/css/dashborad.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
@@ -81,7 +91,7 @@ include('./config/disconnect_from_db.php');
                             </li>
                             <li>
                                 <div class="btn-group dropleft dropdown-avatar">
-                                    <img src="https://bit.ly/2Km1kf6" class="img-circle img-responvie" /><i class="fa fa-angle-down dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+                                    <img width="50px" height="50px" src="https://i.pinimg.com/originals/ed/2e/e4/ed2ee49c72e3aff37d3a9428112f287b.png" class="img-circle img-responvie" />
                                 </div>
                             </li>
                         </ul>
@@ -138,7 +148,7 @@ include('./config/disconnect_from_db.php');
                             </li>
                             <li>
                                 <div class="btn-group dropleft dropdown-avatar">
-                                    <img src="https://bit.ly/2Km1kf6" class="img-circle img-responvie" /><i class="fa fa-angle-down dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+                                    <img width="50px" height="50px" src="https://i.pinimg.com/originals/ed/2e/e4/ed2ee49c72e3aff37d3a9428112f287b.png" class="img-circle img-responvie" />
                                 </div>
                             </li>
                         </ul>
@@ -146,13 +156,12 @@ include('./config/disconnect_from_db.php');
                     <div class="content">
                         <div class="handlePoint">
                             <form id="handlePoint"><!-- action="themDiem.php" method="post" -->
-                                <h4 class="titleTool">Thêm mới điểm học phần</h4>
                                 <input type="text" name="msv" placeholder="Mã sinh viên..." />
                                 <select style="padding:10px;" class="mhp" name="mhp" value="">
                                     <option value="">-- Chọn Học Phần --</option>
                                     <?php
                                     foreach ($hocPhan as $row) {
-                                        echo '<option value="' . $row['Mã học phần'] . '">' . $row['Tên học phần'] . '</option>';
+                                        echo '<option value="' . $row['ma_hocphan'] . '">' . $row['ten_hocphan'] . '</option>';
                                     }
                                     ?>
                                 </select><br>
@@ -160,6 +169,10 @@ include('./config/disconnect_from_db.php');
                                 <input type="text" name="diemB" placeholder="Điểm B..." />
                                 <input type="text" name="diemC" placeholder="Điểm C..." />
                                 <input type="submit" name="submit" value="Thêm mới" />
+                            </form>
+                            <form id="handleSearch">
+                                <input type="number" name="search" placeholder="Tìm kiếm theo mã sinh viên..." />
+                                <button type="submit" style="padding:10px;">Search</button>
                             </form>
                         </div>
                         <div style="height: 500px;overflow: overlay;">
@@ -179,16 +192,15 @@ include('./config/disconnect_from_db.php');
                                     </thead>
                                     <tbody>
                                         <?php
-                                        $count = 1;
                                         if ($diemhocphan) {
-                                            foreach ($diemhocphan as $diem) {
+                                            foreach ($diemhocphan as $key => $diem) {
                                                 echo "<tr class=dong" . " >";
-                                                echo "<td>" . $count++ . "</td>";
-                                                echo "<td>" . $diem['Mã học phần'] . "</td>";
-                                                echo "<td " . "name=" . $diem['Mã sinh viên'] . "" . ">" . $diem['Mã sinh viên'] . "</td>";
-                                                echo "<td>" . $diem['A'] . "</td>";
-                                                echo "<td>" . $diem['B'] . "</td>";
-                                                echo "<td>" . $diem['C'] . "</td>";
+                                                echo "<td>" . ($page - 1) * $page_size +  $key + 1 . "</td>";
+                                                echo "<td>" . $diem['ma_hocphan'] . "</td>";
+                                                echo "<td " . "name=" . $diem['ma_sinhvien'] . "" . ">" . $diem['ma_sinhvien'] . "</td>";
+                                                echo "<td>" . $diem['diem_a'] . "</td>";
+                                                echo "<td>" . $diem['diem_b'] . "</td>";
+                                                echo "<td>" . $diem['diem_c'] . "</td>";
                                                 echo "<td>" . "
                                             <button class='edit'><i class='far fa-edit'></i></button>
                                             <button type='submit' class='delete'><i class='far fa-trash-alt'></i></button>
@@ -202,6 +214,33 @@ include('./config/disconnect_from_db.php');
                                     </tbody>
                                 </table>
                             </form>
+                            <ul class="pagination">
+                                <?php if ($page > 1) : ?>
+                                    <li class="prev"><a href="dashborad.php?page=<?php echo $page - 1 ?>">Prev</a></li>
+                                <?php endif; ?>
+
+                                <?php if ($page > 3) : ?>
+                                    <li class="start"><a href="dashborad.php?page=1">1</a></li>
+                                    <li class="dots">...</li>
+                                <?php endif; ?>
+
+                                <?php if ($page - 2 > 0) : ?><li class="page"><a href="dashborad.php?page=<?php echo $page - 2 ?>"><?php echo $page - 2 ?></a></li><?php endif; ?>
+                                <?php if ($page - 1 > 0) : ?><li class="page"><a href="dashborad.php?page=<?php echo $page - 1 ?>"><?php echo $page - 1 ?></a></li><?php endif; ?>
+
+                                <li class="currentpage"><a href="dashborad.php?page=<?php echo $page ?>"><?php echo $page ?></a></li>
+
+                                <?php if ($page + 1 < ceil($total_pages / $page_size) + 1) : ?><li class="page"><a href="dashborad.php?page=<?php echo $page + 1 ?>"><?php echo $page + 1 ?></a></li><?php endif; ?>
+                                <?php if ($page + 2 < ceil($total_pages / $page_size) + 1) : ?><li class="page"><a href="dashborad.php?page=<?php echo $page + 2 ?>"><?php echo $page + 2 ?></a></li><?php endif; ?>
+
+                                <?php if ($page < ceil($total_pages / $page_size) - 2) : ?>
+                                    <li class="dots">...</li>
+                                    <li class="end"><a href="dashborad.php?page=<?php echo ceil($total_pages / $page_size) ?>"><?php echo ceil($total_pages / $page_size) ?></a></li>
+                                <?php endif; ?>
+
+                                <?php if ($page < ceil($total_pages / $page_size)) : ?>
+                                    <li class="next"><a href="dashborad.php?page=<?php echo $page + 1 ?>">Next</a></li>
+                                <?php endif; ?>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -224,7 +263,7 @@ include('./config/disconnect_from_db.php');
                             </li>
                             <li>
                                 <div class="btn-group dropleft dropdown-avatar">
-                                    <img src="https://bit.ly/2Km1kf6" class="img-circle img-responvie" /><i class="fa fa-angle-down dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+                                    <img width="50px" height="50px" src="https://i.pinimg.com/originals/ed/2e/e4/ed2ee49c72e3aff37d3a9428112f287b.png" class="img-circle img-responvie" />
                                 </div>
                             </li>
                         </ul>
@@ -255,7 +294,7 @@ include('./config/disconnect_from_db.php');
             </div>
         </div>
     </div>
-    <script src="./assets/js/dashborad.js"></script>
+    <script src="../assets/js/dashborad.js"></script>
 </body>
 
 </html>

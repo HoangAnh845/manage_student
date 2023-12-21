@@ -1,43 +1,37 @@
 <?php
 // Kết nối đến CSDL
 include('../config/connect_to_db.php');
-include('../class.php');
-include('../function.php');
+include('../class/message.php');
+include('../query.php');
 
 // Lấy dữ liệu từ biểu mẫu gửi lên
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $msv = $_POST["add_msv"];
-    $mhp = $_POST["add_mhp"];
-    $a = $_POST["add_a"];
-    $b = $_POST["add_b"];
-    $c = $_POST["add_c"];
-    $response = new Info();
+    $msv = $_POST["ma_sinhvien"];
+    $mhp = $_POST["ma_hocphan"];
+    $a = $_POST["diem_a"];
+    $b = $_POST["diem_b"];
+    $c = $_POST["diem_c"];
+    $res = null;
 
     if (isset($msv) && isset($mhp) && isset($a) && isset($b) && isset($c)) {
         $data = [
-            "Mã sinh viên" => $msv,
-            "Mã học phần" => $mhp,
-            "A" => $a,
-            "B" => $b,
-            "C" => $c
+            "ma_sinhvien" => $msv,
+            "ma_hocphan" => $mhp,
+            "diem_a" => $a,
+            "diem_b" => $b,
+            "diem_c" => $c,
         ];
-        // Trả về kết quả cho Ajax
-        $q = insert($conn, "tbl_diemhocphan", $data);
-        $r = $q->rowCount() > 0;
-        if ($r) {
-            $response->set_success(true);
-            $response->set_message('Thêm dữ liệu thành công.');
-            $response->set_msv($msv);
-            $response->set_mhp($mhp);
-            $response->set_a($a);
-            $response->set_b($b);
-            $response->set_c($c);
+        $q = sqlInsert($conn, "tbl_diemhocphan", $data);
+        if ($q) {
+            $sqlDiemHocPhan = sqlSelect($conn, "*", "tbl_diemhocphan", 1);
+            $diemhocphan = $sqlDiemHocPhan->fetchAll(PDO::FETCH_ASSOC);
+            $res = new Message(true, 'Thêm dữ liệu thành công', $diemhocphan);
         } else {
-            $response->set_success(false);
-            $response->set_message('Đã xảy ra lỗi khi thêm dữ liệu. Vui lòng thử lại sau.');
+            $res = new Message(false, 'Thêm dữ liệu thất bại', []);
         }
-        echo json_encode($response);
+        echo json_encode($res);
+        return $res;
         // Đóng kết nối đến CSDL
-        include('../config/disconnect_from_db.php');
+        include('./config/disconnect_from_db.php');
     }
 }
